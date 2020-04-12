@@ -76,7 +76,7 @@ python train_baseline.py \
     --num_epochs 10 \
     --name baseline \
     --num_layers 2 \
-    --num_labeled 4250
+    --num_labeled 4250 \
     --model_type gru 
 ```
 or 
@@ -86,7 +86,7 @@ python train_baseline.py \
     --hidden_dim 768 \
     --num_epochs 10 \
     --name baseline \
-    --num_labeled 4250
+    --num_labeled 4250 \
     --model_type bert
 ```
 
@@ -97,7 +97,7 @@ python train_fully_supervised.py \
     --num_epochs 10 \
     --name fully_supervised \
     --num_layers 2 \
-    --num_labeled 4250
+    --num_labeled 4250 \
     --model_type gru 
 ```
 or
@@ -106,7 +106,7 @@ python train_fully_supervised.py \
     --hidden_dim 768 \
     --num_epochs 10 \
     --name fully_supervised \
-    --num_labeled 4250
+    --num_labeled 4250 \
     --model_type bert 
 ```
 ### 3. Train phase 2 model with pseudo labels
