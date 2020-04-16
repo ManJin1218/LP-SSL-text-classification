@@ -72,11 +72,11 @@ python make_data.py --num_labeled 4250 --model_type bert
 ### 1. Train baseline (phase 1) model 
 ```shell
 python train_baseline.py \
-    --hidden_dim 32 \
-    --num_epochs 10 \
-    --name baseline \
-    --num_layers 2 \
+    --hidden_dim 128 \
+    --num_layers 5 \
+    --num_epochs 20 \
     --num_labeled 4250 \
+    --name baseline \
     --model_type gru 
 ```
 or 
@@ -84,51 +84,53 @@ or
 ```shell
 python train_baseline.py \
     --hidden_dim 768 \
-    --num_epochs 10 \
-    --name baseline \
+    --num_epochs 20 \
     --num_labeled 4250 \
+    --name baseline \
     --model_type bert
 ```
 
 ### 2. Train full supervised (upper bound) model
 ```shell
 python train_fully_supervised.py \
-    --hidden_dim 32 \
-    --num_epochs 10 \
+    --hidden_dim 128 \
+    --num_layers 5 \
+    --num_epochs 20 \
     --name fully_supervised \
-    --num_layers 2 \
-    --num_labeled 4250 \
     --model_type gru 
 ```
 or
 ```shell
 python train_fully_supervised.py \
     --hidden_dim 768 \
-    --num_epochs 10 \
+    --num_epochs 20 \
     --name fully_supervised \
-    --num_labeled 4250 \
     --model_type bert 
 ```
+
 ### 3. Train phase 2 model with pseudo labels
 ```shell
 python train_phase2.py \
-    --total_epochs 99 \
-    --name phase2 \
+    --total_epochs 50 \
+    --hidden_dim 128 \
+    --num_layers 5 \
     --num_labeled 4250 \
     --knn 100 \
+    --name phase2 \
     --phase1_model_name baseline_gru \
-    --model_type bert
+    --model_type gru
 ```
 
 or
 
 ```shell
 python train_phase2.py \
-    --total_epochs 99 \
-    --name phase2 \
+    --total_epochs 50 \
+    --hidden_dim 768 \
     --num_labeled 4250 \
     --knn 100 \
-    --phase1_model_name baseline_gru \
-    --model_type gru
+    --name phase2 \
+    --phase1_model_name baseline_bert \
+    --model_type bert
 ```
 If successful, we should see that the performance of this model lies between that of phase 1 model and the fully-supervised model. We can also test how performance improves with more labeled data.
