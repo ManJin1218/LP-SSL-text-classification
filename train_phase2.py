@@ -57,7 +57,7 @@ def main():
         p_labels, updated_weights, updated_class_weights = label_propagation(batch_features, d["groundtruth_labels"], d["labeled_idx"], d["unlabeled_idx"], k=args.knn)
         pseudo_loader = update_pseudoloader(d["all_indices"], p_labels, updated_weights, updated_class_weights)
         model = create_model(model_config, phase2=True)
-        model.load_state_dict(torch.load("models/{}_model.pt".format(args.name), map_location=torch.device(device))["model_state_dict"])
+       model.load_state_dict(torch.load(PATH, map_location=torch.device(device))["model_state_dict"])
         model = model.to(device)
         criterion = nn.CrossEntropyLoss(reduction="none")
         optimizer = optim.Adam(model.parameters())
