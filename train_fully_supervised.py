@@ -18,10 +18,13 @@ def main():
     parser.add_argument("--num_layers", default=2, type=int, help="number of layers for GRU")
     parser.add_argument("--num_labeled", default=4250, type=int, help="number of labeled data used in make_data.py", required=True)
     parser.add_argument("--model_type", type=str, help="model type", required=True, choices=["gru", "bert"])
+    parser.add_argument("--seed", default=1211, type=int, help="random seed")
     args = parser.parse_args()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    torch.manual_seed(88)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
 
     with open('data_local/processed/data_{}_{}.pickle'.format(args.model_type, args.num_labeled), 'rb') as handle:
         d = pickle.load(handle)
