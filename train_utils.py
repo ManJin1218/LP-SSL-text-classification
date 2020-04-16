@@ -139,10 +139,11 @@ def evaluate(model, dataloader, device):
     return accuracy
 
 
-def train(train_loader, val_loader, model, optimizer, criterion, device, args):
+def train(train_loader, val_loader, model, optimizer, criterion, device, args, early_stop=3):
     train_loss_history = []
     val_accuracy_history = []
     best_val_acc = 0
+    early_stop_cnt = 0
     max_epoch = args.num_epochs
 
     for epoch in tqdm(range(max_epoch)):
@@ -171,6 +172,7 @@ def train(train_loader, val_loader, model, optimizer, criterion, device, args):
         accuracy = evaluate(model, val_loader, device)
         val_accuracy_history.append(accuracy)
         if accuracy > best_val_acc:
+            early_stop_cnt = 0
             best_val_acc = accuracy
             torch.save({
                 "model_state_dict": model.state_dict(),
@@ -178,21 +180,27 @@ def train(train_loader, val_loader, model, optimizer, criterion, device, args):
                 "val_accuracy_history": val_accuracy_history,
                 "args": args
             }, "models/{}_{}_model.pt".format(args.name, args.model_type))
+        else:
+            early_stop_cnt += 1
+            if early_stop_cnt >= early_stop:
+                return
+    # for phase 2
+    return loss.item(), accuracy
 
 
-def extract_features(data_loader, model_path, device):
+def extract_features(data_loader, model_path, device="cpu"):
     args = torch.load(model_path, map_location=torch.device(device))["args"]
 
     # build model
-    feature_extractor = create_model(args, phase2=True).to(device)
-    feature_extractor.load_state_dict(torch.load(model_path, map_location=torch.device(device))["model_state_dict"])
+    feature_extractor = create_model(args, phase2=True).to("cuda")
+    feature_extractor.load_state_dict(torch.load(model_path, map_location=torch.device("cuda"))["model_state_dict"])
     feature_extractor.fc = Identity()
     feature_extractor.eval()
-    res = torch.tensor([]).to(device)
+    res = np.array([]).reshape(0, args.hidden_dim)
     print("Extracting features......")
     for i, (data_batch, batch_labels, w, c) in enumerate(tqdm(data_loader)):
-        batch_features = feature_extractor(data_batch.to(device))
-        res = torch.cat((res, batch_features), 0)
+        batch_features = feature_extractor(data_batch.to("cuda")).cpu().detach().numpy()
+        res = np.vstack([res, batch_features])
 
     print("Extracted {} points; each {}-dimensional!".format(*res.shape))
 
@@ -272,8 +280,7 @@ def assign_pseudo_labels(Z, groundtruth_labels, labeled_idx, num_classes=2):
 
 
 def calculate_knn(batch_features, k=100):
-    X = batch_features.cpu().detach().numpy()
-    X = normalize(X)
+    X = normalize(batch_features)
     print("Calculating {} nearest neighbors for each point...".format(k))
     nbrs = NearestNeighbors(n_neighbors=k + 1, algorithm='auto').fit(X)
     distances, indices = nbrs.kneighbors(X)
