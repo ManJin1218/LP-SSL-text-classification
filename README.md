@@ -73,7 +73,7 @@ python make_data.py --num_labeled 4250 --model_type bert
 ```shell
 python train_baseline.py \
     --hidden_dim 128 \
-    --num_layers 5 \
+    --num_layers 3 \
     --num_epochs 20 \
     --num_labeled 4250 \
     --name baseline \
@@ -94,7 +94,7 @@ python train_baseline.py \
 ```shell
 python train_fully_supervised.py \
     --hidden_dim 128 \
-    --num_layers 5 \
+    --num_layers 3 \
     --num_epochs 20 \
     --name fully_supervised \
     --model_type gru 
@@ -113,7 +113,7 @@ python train_fully_supervised.py \
 python train_phase2.py \
     --total_epochs 50 \
     --hidden_dim 128 \
-    --num_layers 5 \
+    --num_layers 3 \
     --num_labeled 4250 \
     --knn 100 \
     --name phase2 \
