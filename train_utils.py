@@ -179,7 +179,7 @@ def train(train_loader, val_loader, model, optimizer, criterion, device, args, e
                 "train_loss_history": train_loss_history,
                 "val_accuracy_history": val_accuracy_history,
                 "args": args
-            }, "models/{}_{}_model.pt".format(args.name, args.model_type))
+            }, "models/{}_{}_{}_model.pt".format(args.name, args.model_type, args.num_labeled))
         else:
             early_stop_cnt += 1
             if early_stop_cnt >= early_stop:
