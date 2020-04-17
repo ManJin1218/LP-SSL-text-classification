@@ -117,7 +117,7 @@ python train_phase2.py \
     --num_labeled 4250 \
     --knn 100 \
     --name phase2 \
-    --phase1_model_name baseline_gru \
+    --phase1_model_name baseline_gru_4250 \
     --model_type gru
 ```
 
@@ -130,7 +130,7 @@ python train_phase2.py \
     --num_labeled 4250 \
     --knn 100 \
     --name phase2 \
-    --phase1_model_name baseline_bert \
+    --phase1_model_name baseline_bert_4250 \
     --model_type bert
 ```
 If successful, we should see that the performance of this model lies between that of phase 1 model and the fully-supervised model. We can also test how performance improves with more labeled data.
