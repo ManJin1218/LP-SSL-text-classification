@@ -51,7 +51,7 @@ def main():
     loss, accuracy = train(pseudo_loader, d["val_loader"], model, optimizer, criterion, device, args)
 
     # path of the phase2 model
-    PATH = "models/{}_{}_model.pt".format(args.name, args.model_type)
+    PATH = "models/{}_{}_{}_model.pt".format(args.name, args.model_type, args.num_labeled)
     
     train_loss_history = []
     val_accuracy_history = []
@@ -83,7 +83,7 @@ def main():
                 "train_loss_history": train_loss_history,
                 "val_accuracy_history": val_accuracy_history,
                 "args": args
-            }, "models/{}_{}_{}_model.pt".format(args.name, args.model_type, args.num_labeled))
+            }, "models/best_{}_{}_{}_model.pt".format(args.name, args.model_type, args.num_labeled))
         else:
             early_stop_cnt += 1
             if early_stop_cnt >= early_stop:
