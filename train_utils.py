@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from transformers import BertModel
+from transformers import DistilBertModel
 
 from sklearn.neighbors import NearestNeighbors
 import scipy
@@ -92,7 +92,7 @@ class GRUClassifier(nn.Module):
 class BertClassifier(nn.Module):
     def __init__(self, hidden_dim, dropout=0.1, num_classes=2):
         super().__init__()
-        self.bert = BertModel.from_pretrained('bert-base-uncased', output_attentions=False, output_hidden_states=False)
+        self.bert = DistilBertModel.from_pretrained('distilbert-base-uncased', output_attentions=False, output_hidden_states=False)
         self.drop = nn.Dropout(p=dropout)
         self.fc = nn.Linear(hidden_dim, num_classes)
 
