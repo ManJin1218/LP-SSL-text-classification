@@ -99,10 +99,10 @@ class BertClassifier(nn.Module):
     def forward(self, inputs):
         # input: batch, seq_len=512
         # output:
-        #   last_hidden_state: batch, seq_len, hidden_dim=768
-        #   pooler_output: batch, hidden_dim
-        last_hidden_state, pooler_out = self.bert(input_ids=inputs)
-        dropout_out = self.drop(pooler_out)
+        #   last_hidden_states: batch, seq_len, hidden_dim=768
+        last_hidden_states = self.bert(input_ids=inputs)[0]
+        out = last_hidden_states.mean(dim=1)
+        dropout_out = self.drop(out)
         logits = self.fc(dropout_out)
         return logits
 
