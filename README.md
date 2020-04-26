@@ -83,7 +83,7 @@ or
 
 ```shell
 python train_baseline.py \
-    --hidden_dim 768 \
+    --hidden_dim 32 \
     --num_epochs 20 \
     --num_labeled 4250 \
     --name baseline \
@@ -102,7 +102,7 @@ python train_fully_supervised.py \
 or
 ```shell
 python train_fully_supervised.py \
-    --hidden_dim 768 \
+    --hidden_dim 32 \
     --num_epochs 20 \
     --name fully_supervised \
     --model_type bert 
@@ -126,7 +126,7 @@ or
 ```shell
 python train_phase2.py \
     --total_epochs 50 \
-    --hidden_dim 768 \
+    --hidden_dim 32 \
     --num_labeled 4250 \
     --knn 100 \
     --name phase2 \
