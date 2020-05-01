@@ -346,6 +346,4 @@ def create_pseudo_label(data_loader, model_path, groundtruth_labels, labeled_idx
 
     w_list = [1. for i in range(len(p_labels))]
     class_weights = [1. for i in range(num_classes)]
-    # for i in range(num_classes):
-    #     class_weights[i] = float(len(groundtruth_labels) / num_classes) / np.sum(np.array(p_labels) == i)
     return p_labels.tolist(), w_list, class_weights
