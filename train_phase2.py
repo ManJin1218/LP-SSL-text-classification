@@ -41,6 +41,9 @@ def main():
     # epoch 0
     batch_features = extract_features(d["groundtruth_loader"], model_path=PATH, device=device)
     p_labels, updated_weights, updated_class_weights = label_propagation(batch_features, d["groundtruth_labels"], d["labeled_idx"], d["unlabeled_idx"], k=args.knn)
+    
+    # p_labels, updated_weights, updated_class_weights = create_pseudo_label(d["groundtruth_loader"], PATH, d["groundtruth_labels"], d["labeled_idx"])
+    
     pseudo_loader = update_pseudoloader(d["all_indices"], p_labels, updated_weights, updated_class_weights)
     model = create_model(model_config, phase2=True)
     model.load_state_dict(torch.load(PATH, map_location=torch.device(device))["model_state_dict"])
@@ -66,6 +69,9 @@ def main():
         print("Epoch {}".format(i + 1))
         batch_features = extract_features(d["groundtruth_loader"], model_path=PATH, device=device)
         p_labels, updated_weights, updated_class_weights = label_propagation(batch_features, d["groundtruth_labels"], d["labeled_idx"], d["unlabeled_idx"], k=args.knn)
+        
+        # p_labels, updated_weights, updated_class_weights = create_pseudo_label(d["groundtruth_loader"], PATH, d["groundtruth_labels"], d["labeled_idx"])
+        
         pseudo_loader = update_pseudoloader(d["all_indices"], p_labels, updated_weights, updated_class_weights)
         model = create_model(model_config, phase2=True)
         model.load_state_dict(torch.load(PATH, map_location=torch.device(device))["model_state_dict"])
