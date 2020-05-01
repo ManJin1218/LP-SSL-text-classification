@@ -327,3 +327,25 @@ def calculate_label_distributions(W, all_labels, labeled_idx, num_classes=2, alp
     Z[Z < 0] = 0
 
     return Z
+
+def create_pseudo_label(data_loader, model_path, groundtruth_labels, labeled_idx, device="cpu", num_classes=2):
+    args = torch.load(model_path, map_location=torch.device(device))["args"]
+
+    # build model
+    model = create_model(args, phase2=True).to("cuda")
+    model.load_state_dict(torch.load(model_path, map_location=torch.device("cuda"))["model_state_dict"])
+    model.eval()
+    p_labels = []
+    print("Assigning pseudo labels......")
+    for i, (data_batch, labels_batch, w, c) in enumerate(tqdm(data_loader)):
+        outputs = F.softmax(model(data_batch.to("cuda")), dim=1)
+        predicted = outputs.max(1, keepdim=True)[1].reshape(-1).tolist()
+        p_labels += predicted
+    p_labels = np.array(p_labels)
+    p_labels[labeled_idx] = groundtruth_labels[labeled_idx]
+
+    w_list = [1. for i in range(len(p_labels))]
+    class_weights = [1. for i in range(num_classes)]
+    # for i in range(num_classes):
+    #     class_weights[i] = float(len(groundtruth_labels) / num_classes) / np.sum(np.array(p_labels) == i)
+    return p_labels.tolist(), w_list, class_weights
