@@ -125,7 +125,7 @@ def evaluate(model, dataloader, device):
     total = 0
     print("Evaluating model...")
 
-    for data_batch, labels_batch, w, c in tqdm(dataloader):
+    for data_batch, labels_batch, w, c in dataloader:
         data_batch = data_batch.to(device)
         labels_batch = labels_batch.to(device)
         outputs = F.softmax(model(data_batch), dim=1)
