@@ -93,7 +93,7 @@ class GRUClassifier(nn.Module):
 class BertClassifier(nn.Module):
     def __init__(self, hidden_dim, num_classes=2):
         super().__init__()
-        self.bert = BertModel.from_pretrained('bert-base-uncased', output_attentions=False, output_hidden_states=False)
+        self.bert = DistilBertModel.from_pretrained('distilbert-base-uncased', output_attentions=False, output_hidden_states=False)
         self.linear = nn.Linear(768, hidden_dim)
         self.fc = nn.Linear(hidden_dim, num_classes)
 
