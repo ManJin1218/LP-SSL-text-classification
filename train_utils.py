@@ -6,7 +6,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from transformers import BertModel
+from transformers import DistilBertModel
+from transformers import get_linear_schedule_with_warmup
 
 from sklearn.neighbors import NearestNeighbors
 import scipy
@@ -144,6 +145,7 @@ def train(train_loader, val_loader, model, optimizer, criterion, device, args, e
     best_val_acc = 0
     early_stop_cnt = 0
     max_epoch = args.num_epochs
+    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=100, num_training_steps=1000)
 
     for epoch in tqdm(range(max_epoch)):
         model.train()
@@ -161,9 +163,11 @@ def train(train_loader, val_loader, model, optimizer, criterion, device, args, e
             loss = loss * c
             loss = loss.sum() / minibatch_size
 
-            loss.backward()
-            optimizer.step()
             optimizer.zero_grad()
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
+            scheduler.step()
             train_loss_history.append(loss.item())
 
         print("loss at the end of epoch {}: ".format(epoch), loss.item())
@@ -328,6 +332,7 @@ def calculate_label_distributions(W, all_labels, labeled_idx, num_classes=2, alp
 
     return Z
 
+# A different way to create pseudo label using prediction result
 def create_pseudo_label(data_loader, model_path, groundtruth_labels, labeled_idx, device="cpu", num_classes=2):
     args = torch.load(model_path, map_location=torch.device(device))["args"]
 
