@@ -26,9 +26,8 @@ In particular, we are interested in applying [label propagation](https://pdfs.se
 ## Experiments
 ### Model specifics
 #### Feature extractor
-- `nn.Embedding` with `vocab_size=10002`
 - Bi-directional `GRU` with pre-trained fasttext word embeddings
-- `BERT`
+- `DistilBERT`
 
 #### Classifier
 - `nn.Linear`
@@ -40,8 +39,8 @@ In particular, we are interested in applying [label propagation](https://pdfs.se
 - `torch.optim.Adam(params)`
 
 ### Training pipeline
-1. Assign a small portion (5~10%) of the training data `T` as the labeled dataset, `L = (x_1,x_2,...,x_l)`. Then remove the labels for the rest and call them the unlabeled dataset, `U = (x_{l+1},x_{l+2},...,x+{l+u})`.
-2. Train a baseline model (e.x. 2-layer GRU with FC layer) on only `L` for `M` epochs, whose performance acts as a lower bound. Train a fully supervised model on `T` for `M` epochs, whose performance acts as an upper bound. 
+1. Assign a small portion (1~10%) of the training data `T` as the labeled dataset, `L = (x_1,x_2,...,x_l)`. Then remove the labels for the rest and call them the unlabeled dataset, `U = (x_{l+1},x_{l+2},...,x+{l+u})`.
+2. Train a baseline model (e.x. 3-layer GRU with FC layer) on only `L` for `M` epochs, whose performance acts as a lower bound. Train a fully supervised model on `T` for `M` epochs, whose performance acts as an upper bound. 
 3. Remove the FC layer from the baseline model to make it a feature extractor. Feed forward both `L` and `U` to get hidden representations `V = (v_1,v_2,...,v_{l+u})`. Do label propagation with `V` and assign/update the inferred labels of `U`.
 4. Train the model initialized with previous weights on both `L` and `U` for one epoch.
 5. Repeat 3 and 4 for `N` epochs. 
@@ -75,7 +74,7 @@ python train_baseline.py \
     --hidden_dim 128 \
     --num_layers 3 \
     --num_epochs 20 \
-    --num_labeled 4250 \
+    --num_labeled 425 \
     --name baseline \
     --model_type gru 
 ```
@@ -85,7 +84,7 @@ or
 python train_baseline.py \
     --hidden_dim 32 \
     --num_epochs 20 \
-    --num_labeled 4250 \
+    --num_labeled 425 \
     --name baseline \
     --model_type bert
 ```
@@ -114,10 +113,10 @@ python train_phase2.py \
     --total_epochs 50 \
     --hidden_dim 128 \
     --num_layers 3 \
-    --num_labeled 4250 \
-    --knn 100 \
+    --num_labeled 425 \
+    --knn 75 \
     --name phase2 \
-    --phase1_model_name baseline_gru_4250 \
+    --phase1_model_name baseline_gru_425 \
     --model_type gru
 ```
 
@@ -127,10 +126,10 @@ or
 python train_phase2.py \
     --total_epochs 50 \
     --hidden_dim 32 \
-    --num_labeled 4250 \
-    --knn 100 \
+    --num_labeled 425 \
+    --knn 75 \
     --name phase2 \
-    --phase1_model_name baseline_bert_4250 \
+    --phase1_model_name baseline_bert_425 \
     --model_type bert
 ```
-If successful, we should see that the performance of this model lies between that of phase 1 model and the fully-supervised model. We can also test how performance improves with more labeled data.
+With proper labeled data size and parameters, we should see that the performance of the model lies between that of phase 1 model and the fully-supervised model. We can also test how performance improves with more labeled data.
