@@ -61,11 +61,11 @@ with zipfile.ZipFile("data_local/wiki-news-300d-1M.vec.zip", 'r') as zip_ref:
 ```
 and then finally 
 ```shell
-python make_data.py --num_labeled 4250 --model_type gru
+python make_data.py --num_labeled 425 --model_type gru
 ```
 or 
 ```shell
-python make_data.py --num_labeled 4250 --model_type bert
+python make_data.py --num_labeled 425 --model_type bert
 ```
 
 ### 1. Train baseline (phase 1) model 
